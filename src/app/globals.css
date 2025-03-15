@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --primary: #e94560;
-  --primary-dark: #cf3c54;
+  --background: #020617;
+  --foreground: #f8fafc;
+  --primary: #8b5cf6;
+  --primary-dark: #7c3aed;
   --secondary: #0f3460;
-  --dark-bg: #1a1a2e;
+  --dark-bg: #020617;
+  --star-color: #ffd700;
+  --star-glow: rgba(255, 215, 0, 0.7);
 }
 
 @theme inline {
@@ -16,17 +18,31 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #020617;
+  --foreground: #f8fafc;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* 星空背景效果 */
+.starry-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: linear-gradient(135deg, #0b0f1d 0%, #1a1d36 40%, #1e1247 70%, #120d29 100%);
+  background-attachment: fixed;
 }
 
 /* 一些额外的全局样式 */
