@@ -9,21 +9,6 @@ const LightsGame = dynamic(() => import('@/components/LightsGame'), {
   loading: () => <p className="text-center p-10 text-indigo-200">正在加载星空...</p>
 });
 
-// 星空背景样式
-const starryBackground = {
-  background: 'linear-gradient(135deg, #0b0f1d 0%, #1a1d36 40%, #1e1247 70%, #120d29 100%)',
-  backgroundAttachment: 'fixed'
-};
-
-// 应用到全局的样式
-const globalStyles = {
-  minHeight: '100vh',
-  width: '100%',
-  margin: 0,
-  padding: 0,
-  backgroundColor: '#0b0f1d'
-};
-
 export default function Home() {
   const [boardSize, setBoardSize] = useState<number>(3);
   const [isOptionsOpen, setIsOptionsOpen] = useState<boolean>(false);
@@ -137,6 +122,7 @@ export default function Home() {
     if (customInitialState) {
       setCustomInitialState(createEmptyCustomState());
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardSize]);
 
   const toggleOptions = () => {

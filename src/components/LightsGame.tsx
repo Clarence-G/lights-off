@@ -17,6 +17,7 @@ const LightsGame = ({ boardSize = 3, initialState = null }: LightsGameProps) => 
   // 初始化游戏
   useEffect(() => {
     initializeGame();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardSize, initialState]); // 当boardSize或initialState改变时重新初始化游戏
 
   // 随机初始化游戏，确保有解
