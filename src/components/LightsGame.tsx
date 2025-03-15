@@ -3,7 +3,11 @@
 import { useState, useEffect } from 'react';
 import styles from './LightsGame.module.css';
 
-const LightsGame = () => {
+interface LightsGameProps {
+  boardSize: number;
+}
+
+const LightsGame = ({ boardSize = 3 }: LightsGameProps) => {
   // 游戏状态: true表示灯亮，false表示灯灭
   const [lights, setLights] = useState<boolean[][]>([]);
   const [isWinner, setIsWinner] = useState(false);
@@ -12,18 +16,19 @@ const LightsGame = () => {
   // 初始化游戏
   useEffect(() => {
     initializeGame();
-  }, []);
+  }, [boardSize]); // 当boardSize改变时重新初始化游戏
 
   // 随机初始化游戏，确保有解
   const initializeGame = () => {
-    // 创建一个全部为false（灯灭）的3x3矩阵
-    const newBoard = Array(3).fill(false).map(() => Array(3).fill(false));
+    // 创建一个全部为false（灯灭）的大小为boardSize的矩阵
+    const newBoard = Array(boardSize).fill(false).map(() => Array(boardSize).fill(false));
     
     // 随机翻转一些格子来生成初始状态
     // 在实际游戏中，这确保游戏是可解的
-    for (let i = 0; i < 5; i++) {
-      const row = Math.floor(Math.random() * 3);
-      const col = Math.floor(Math.random() * 3);
+    const flips = Math.max(boardSize * 2, 5); // 根据棋盘大小调整翻转次数
+    for (let i = 0; i < flips; i++) {
+      const row = Math.floor(Math.random() * boardSize);
+      const col = Math.floor(Math.random() * boardSize);
       toggleLights(newBoard, row, col);
     }
     
@@ -41,13 +46,13 @@ const LightsGame = () => {
     if (row > 0) board[row-1][col] = !board[row-1][col];
     
     // 翻转下方格子（如果存在）
-    if (row < 2) board[row+1][col] = !board[row+1][col];
+    if (row < boardSize - 1) board[row+1][col] = !board[row+1][col];
     
     // 翻转左侧格子（如果存在）
     if (col > 0) board[row][col-1] = !board[row][col-1];
     
     // 翻转右侧格子（如果存在）
-    if (col < 2) board[row][col+1] = !board[row][col+1];
+    if (col < boardSize - 1) board[row][col+1] = !board[row][col+1];
   };
 
   // 处理格子点击
@@ -72,6 +77,15 @@ const LightsGame = () => {
     }
   };
 
+  // 根据棋盘大小调整cell大小的样式
+  const getCellSizeStyle = () => {
+    const baseSize = boardSize <= 3 ? 80 : boardSize <= 4 ? 65 : 50; // 根据棋盘大小调整格子大小
+    return {
+      width: `${baseSize}px`,
+      height: `${baseSize}px`
+    };
+  };
+
   return (
     <div className={styles.gameContainer}>
       <h1 className={styles.title}>Lights-On Game</h1>
@@ -83,6 +97,7 @@ const LightsGame = () => {
               <div
                 key={`${rowIndex}-${colIndex}`}
                 className={`${styles.cell} ${light ? styles.on : styles.off}`}
+                style={getCellSizeStyle()}
                 onClick={() => handleClick(rowIndex, colIndex)}
               />
             ))}
