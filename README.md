@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lights-On 益智游戏
 
-## Getting Started
+一个基于Next.js构建的经典Lights-Out益智游戏。游戏目标是通过点击格子，使所有灯都亮起来。
 
-First, run the development server:
+## 游戏规则
+
+- 游戏界面是一个3x3的格子
+- 点击一个格子会改变该格子及其上下左右相邻格子的状态（亮变暗，暗变亮）
+- 游戏的目标是使所有格子都变成亮的状态
+- 系统会记录你完成游戏所用的点击次数
+
+## 技术栈
+
+- Next.js 14
+- React
+- TypeScript
+- CSS Modules
+- Tailwind CSS
+
+## 本地开发
+
+首先，克隆此仓库并安装依赖：
+
+```bash
+git clone <repository-url>
+cd lights-off
+npm install
+```
+
+然后，启动开发服务器：
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+打开 [http://localhost:3000](http://localhost:3000) 在浏览器中查看应用。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 部署到Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+此项目已配置为可以轻松部署到Vercel平台。
 
-## Learn More
+### 部署步骤：
 
-To learn more about Next.js, take a look at the following resources:
+1. 创建一个 [Vercel 账号](https://vercel.com/signup)
+2. 将代码推送到GitHub仓库
+3. 在Vercel控制台中导入此GitHub仓库
+4. Vercel将自动检测到Next.js项目并使用最佳配置
+5. 点击"Deploy"按钮
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+或者，您可以使用Vercel CLI进行部署：
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm i -g vercel
+vercel
+```
 
-## Deploy on Vercel
+## 自定义游戏难度
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+如果你想调整游戏难度，可以修改`src/components/LightsGame.tsx`文件中的初始化函数，更改随机翻转的次数：
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```typescript
+// 随机翻转更多或更少次数来改变难度
+for (let i = 0; i < 5; i++) { // 将5改为其他数字
+  const row = Math.floor(Math.random() * 3);
+  const col = Math.floor(Math.random() * 3);
+  toggleLights(newBoard, row, col);
+}
+```
+
+## 许可证
+
+MIT

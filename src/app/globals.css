@@ -3,6 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #e94560;
+  --primary-dark: #cf3c54;
+  --secondary: #0f3460;
+  --dark-bg: #1a1a2e;
 }
 
 @theme inline {
@@ -23,4 +27,32 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* 一些额外的全局样式 */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* 响应式设计 */
+@media (max-width: 640px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+  p {
+    font-size: 0.9rem;
+  }
 }
