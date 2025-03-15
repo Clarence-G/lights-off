@@ -7,9 +7,15 @@ interface LightsGameProps {
   boardSize: number;
   initialState?: boolean[][] | null;
   solutionHints?: boolean[][] | null; // 添加求解提示属性
+  eyeProtectionMode?: boolean; // 添加护眼模式属性
 }
 
-const LightsGame = ({ boardSize = 3, initialState = null, solutionHints = null }: LightsGameProps) => {
+const LightsGame = ({ 
+  boardSize = 3, 
+  initialState = null, 
+  solutionHints = null,
+  eyeProtectionMode = false
+}: LightsGameProps) => {
   // 游戏状态: true表示星星亮起，false表示星星暗淡
   const [stars, setStars] = useState<boolean[][]>([]);
   const [isWinner, setIsWinner] = useState(false);
@@ -142,10 +148,20 @@ const LightsGame = ({ boardSize = 3, initialState = null, solutionHints = null }
   const renderStar = (rowIndex: number, colIndex: number, isOn: boolean) => {
     const isHinted = solutionHints && solutionHints[rowIndex][colIndex];
     
+    // 根据护眼模式应用不同样式
+    const starClasses = `
+      ${styles.cell} 
+      ${isOn 
+        ? eyeProtectionMode ? styles.onEyeProtection : styles.on 
+        : eyeProtectionMode ? styles.offEyeProtection : styles.off
+      } 
+      ${isHinted ? styles.hint : ''}
+    `.trim();
+    
     return (
       <div
         key={`${rowIndex}-${colIndex}`}
-        className={`${styles.cell} ${isOn ? styles.on : styles.off} ${isHinted ? styles.hint : ''}`}
+        className={starClasses}
         style={getStarSizeStyle()}
         onClick={() => handleClick(rowIndex, colIndex)}
       >
@@ -155,7 +171,7 @@ const LightsGame = ({ boardSize = 3, initialState = null, solutionHints = null }
   };
 
   return (
-    <div className={styles.gameContainer}>
+    <div className={`${styles.gameContainer} ${eyeProtectionMode ? styles.eyeProtectionContainer : ''}`}>
       <h1 className={styles.title}>
         星光唤醒
         {initialState && (
@@ -179,17 +195,17 @@ const LightsGame = ({ boardSize = 3, initialState = null, solutionHints = null }
       </div>
       
       {isWinner && (
-        <div className={styles.winnerMessage}>
+        <div className={`${styles.winnerMessage} ${eyeProtectionMode ? styles.winnerMessageEyeProtection : ''}`}>
           <h2>✨ 星光璀璨！✨</h2>
           <p>你成功点亮了所有星星，用了 {moveCount} 次移动！</p>
-          <button className={styles.resetButton} onClick={initializeGame}>
+          <button className={`${styles.resetButton} ${eyeProtectionMode ? styles.resetButtonEyeProtection : ''}`} onClick={initializeGame}>
             <span>✨</span> 再次挑战 <span>✨</span>
           </button>
         </div>
       )}
       
       {!isWinner && (
-        <button className={styles.resetButton} onClick={initializeGame}>
+        <button className={`${styles.resetButton} ${eyeProtectionMode ? styles.resetButtonEyeProtection : ''}`} onClick={initializeGame}>
           <span>✨</span> 重置星图 <span>✨</span>
         </button>
       )}

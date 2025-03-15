@@ -16,6 +16,7 @@ export default function Home() {
   const [isDevMode, setIsDevMode] = useState<boolean>(false);
   const [customInitialState, setCustomInitialState] = useState<boolean[][] | null>(null);
   const [solutionHints, setSolutionHints] = useState<boolean[][] | null>(null); // 存储求解提示
+  const [eyeProtectionMode, setEyeProtectionMode] = useState<boolean>(false); // 护眼模式状态
   
   // 开发者模式激活计数器
   const [titleClickCount, setTitleClickCount] = useState<number>(0);
@@ -343,6 +344,11 @@ export default function Home() {
     setSolutionHints(null);
   };
 
+  // 切换护眼模式
+  const toggleEyeProtectionMode = () => {
+    setEyeProtectionMode(prev => !prev);
+  };
+
   return (
     <>
       <div className="starry-bg"></div>
@@ -407,6 +413,28 @@ export default function Home() {
                     5x5
                   </button>
                 </div>
+              </div>
+              
+              {/* 护眼模式选项 */}
+              <div className="mb-3 md:mb-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs md:text-sm text-indigo-300">护眼模式:</p>
+                  <label className="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={eyeProtectionMode}
+                      onChange={toggleEyeProtectionMode}
+                    />
+                    <div className="relative w-11 h-6 bg-indigo-800/60 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-indigo-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500/80"></div>
+                    <span className="ms-2 text-xs font-medium text-indigo-200">
+                      {eyeProtectionMode ? "已开启" : "已关闭"}
+                    </span>
+                  </label>
+                </div>
+                <p className="text-xs text-indigo-400 mt-1">
+                  降低星光亮度和闪烁效果，减轻眼睛疲劳
+                </p>
               </div>
               
               <div className="text-xs md:text-sm text-indigo-300 mb-4">
@@ -517,6 +545,7 @@ export default function Home() {
           boardSize={boardSize} 
           initialState={customInitialState}
           solutionHints={solutionHints}
+          eyeProtectionMode={eyeProtectionMode}
         />
         
         {/* 在移动设备上添加屏幕旋转提示 */}

@@ -427,4 +427,96 @@
     width: 80px;
     height: 80px;
   }
+}
+
+/* 护眼模式样式 */
+.eyeProtectionContainer {
+  background-color: rgba(22, 28, 51, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 护眼模式下星星亮起的样式 */
+.onEyeProtection {
+  background-color: #c4a746; /* 较暗的金黄色 */
+  border: none;
+  box-shadow: 0 0 8px 2px rgba(196, 167, 70, 0.3), 0 0 3px 1px rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 2;
+  transform: scale(1);
+  border-radius: 10px;
+  /* 移除闪烁动画 */
+}
+
+.onEyeProtection::before {
+  box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.4) inset;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+}
+
+.onEyeProtection::after {
+  content: '';
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(196, 167, 70, 0.2) 30%, transparent 70%);
+  opacity: 0.3;
+  border-radius: 12px;
+  /* 移除动画 */
+}
+
+/* 护眼模式下星星暗淡的样式 */
+.offEyeProtection {
+  background-color: #1a2035;
+  border: none;
+  opacity: 0.25;
+  box-shadow: none;
+  transform: scale(0.92);
+  border-radius: 10px;
+}
+
+.offEyeProtection::before {
+  opacity: 0.3;
+  box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.05);
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.1));
+}
+
+.eyeProtectionText {
+  color: #a5b4fc;
+  margin-top: 0.5rem;
+  font-weight: normal;
+  font-style: italic;
+}
+
+.winnerMessageEyeProtection {
+  background-color: rgba(30, 41, 59, 0.7);
+  border: 1px solid #3d4c63;
+}
+
+.winnerMessageEyeProtection h2 {
+  color: #c4a746;
+  text-shadow: 0 0 5px rgba(196, 167, 70, 0.3);
+}
+
+.resetButtonEyeProtection {
+  background: linear-gradient(135deg, #a88e3c 0%, #8d6e1c 100%);
+  color: #0f1129;
+  box-shadow: 0 0 3px rgba(168, 142, 60, 0.2);
+  border: 1px solid #a88e3c;
+}
+
+.resetButtonEyeProtection span {
+  animation: none;
+  opacity: 0.95;
+}
+
+.resetButtonEyeProtection:hover {
+  background: linear-gradient(135deg, #b89c46 0%, #9d7b20 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 5px rgba(168, 142, 60, 0.3);
+}
+
+/* 护眼模式下提示标记样式调整 */
+.hint.onEyeProtection,
+.hint.offEyeProtection {
+  box-shadow: 0 0 6px 1px rgba(200, 50, 50, 0.4);
+  border: 1px solid rgba(200, 50, 50, 0.3);
 } 
