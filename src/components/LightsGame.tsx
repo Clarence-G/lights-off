@@ -77,9 +77,34 @@ const LightsGame = ({ boardSize = 3 }: LightsGameProps) => {
     }
   };
 
-  // 根据棋盘大小调整cell大小的样式
+  // 根据棋盘大小和屏幕宽度调整cell大小的样式
   const getCellSizeStyle = () => {
-    const baseSize = boardSize <= 3 ? 80 : boardSize <= 4 ? 65 : 50; // 根据棋盘大小调整格子大小
+    // 检测窗口宽度以设置合适的大小
+    const getBaseSize = () => {
+      if (typeof window === 'undefined') return boardSize <= 3 ? 80 : boardSize <= 4 ? 65 : 50;
+      
+      const width = window.innerWidth;
+      
+      // 超小屏幕设备 (手机)
+      if (width < 375) {
+        return boardSize <= 3 ? 55 : boardSize <= 4 ? 45 : 35;
+      }
+      // 小屏幕设备 (大一点的手机)
+      else if (width < 640) {
+        return boardSize <= 3 ? 65 : boardSize <= 4 ? 50 : 40;
+      }
+      // 中等屏幕设备 (平板)
+      else if (width < 768) {
+        return boardSize <= 3 ? 75 : boardSize <= 4 ? 60 : 45;
+      }
+      // 大屏幕设备 (桌面)
+      else {
+        return boardSize <= 3 ? 80 : boardSize <= 4 ? 65 : 50;
+      }
+    };
+    
+    const baseSize = getBaseSize();
+    
     return {
       width: `${baseSize}px`,
       height: `${baseSize}px`
