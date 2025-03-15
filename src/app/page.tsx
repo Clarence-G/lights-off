@@ -15,6 +15,7 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isDevMode, setIsDevMode] = useState<boolean>(false);
   const [customInitialState, setCustomInitialState] = useState<boolean[][] | null>(null);
+  const [solutionHints, setSolutionHints] = useState<boolean[][] | null>(null); // 存储求解提示
   
   // 开发者模式激活计数器
   const [titleClickCount, setTitleClickCount] = useState<number>(0);
@@ -84,11 +85,216 @@ export default function Home() {
     setCustomInitialState(newState);
   };
   
-  // 关闭开发者模式
-  const closeDevMode = () => {
-    setIsDevMode(false);
-    // 同时清除自定义状态，确保不再显示自定义模式浮窗
-    setCustomInitialState(null);
+  // 高斯消元法解决星图游戏
+  const solveLightsOutPuzzle = (currentStars: boolean[][] | null) => {
+    if (!currentStars) return null;
+    
+    const n = currentStars.length;
+    const MODULO = 2; // 模2运算
+    
+    // 构建增广矩阵
+    const matrix: number[][] = [];
+    const target: number[] = [];
+    
+    // 映射2D棋盘到1D数组
+    const getIndex = (row: number, col: number) => row * n + col;
+    
+    // 构建系数矩阵和目标向量
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        const row = new Array(n * n).fill(0);
+        
+        // 点击位置(i,j)会影响的格子
+        row[getIndex(i, j)] = 1; // 自身
+        if (i > 0) row[getIndex(i - 1, j)] = 1; // 上
+        if (i < n - 1) row[getIndex(i + 1, j)] = 1; // 下
+        if (j > 0) row[getIndex(i, j - 1)] = 1; // 左
+        if (j < n - 1) row[getIndex(i, j + 1)] = 1; // 右
+        
+        matrix.push(row);
+        // 目标是所有灯都亮，所以暗的格子需要变亮
+        target.push(currentStars[i][j] ? 0 : 1);
+      }
+    }
+    
+    // 高斯消元求解
+    const solution = new Array(n * n).fill(0);
+    const matrixSize = n * n;
+    
+    // 前向消元
+    for (let col = 0; col < matrixSize; col++) {
+      // 寻找主元
+      let pivotRow = -1;
+      for (let row = col; row < matrixSize; row++) {
+        if (matrix[row][col] === 1) {
+          pivotRow = row;
+          break;
+        }
+      }
+      
+      if (pivotRow === -1) continue; // 这一列没有主元，跳过
+      
+      // 交换行
+      if (pivotRow !== col) {
+        [matrix[col], matrix[pivotRow]] = [matrix[pivotRow], matrix[col]];
+        [target[col], target[pivotRow]] = [target[pivotRow], target[col]];
+      }
+      
+      // 消元
+      for (let row = 0; row < matrixSize; row++) {
+        if (row !== col && matrix[row][col] === 1) {
+          for (let c = col; c < matrixSize; c++) {
+            matrix[row][c] = (matrix[row][c] + matrix[col][c]) % MODULO;
+          }
+          target[row] = (target[row] + target[col]) % MODULO;
+        }
+      }
+    }
+    
+    // 检查是否有解
+    for (let row = 0; row < matrixSize; row++) {
+      let allZeros = true;
+      for (let col = 0; col < matrixSize; col++) {
+        if (matrix[row][col] === 1) {
+          allZeros = false;
+          break;
+        }
+      }
+      
+      if (allZeros && target[row] === 1) {
+        console.log('无解的方程组');
+        return null; // 无解
+      }
+    }
+    
+    // 回代求解
+    for (let row = matrixSize - 1; row >= 0; row--) {
+      // 寻找这一行的主元
+      let pivotCol = -1;
+      for (let col = 0; col < matrixSize; col++) {
+        if (matrix[row][col] === 1) {
+          pivotCol = col;
+          break;
+        }
+      }
+      
+      if (pivotCol !== -1) {
+        solution[pivotCol] = target[row];
+        // 更新上方的行
+        for (let r = 0; r < row; r++) {
+          if (matrix[r][pivotCol] === 1) {
+            target[r] = (target[r] + solution[pivotCol]) % MODULO;
+          }
+        }
+      }
+    }
+    
+    // 将解决方案转换回2D棋盘格式
+    const hintBoard = Array(n).fill(0).map(() => Array(n).fill(false));
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        hintBoard[i][j] = solution[getIndex(i, j)] === 1;
+      }
+    }
+    
+    // 检查解的正确性
+    const isSolutionValid = validateSolution(currentStars, hintBoard);
+    if (!isSolutionValid) {
+      console.log('解决方案验证失败');
+      // 找到一个贪心解决方案
+      return findGreedySolution(currentStars);
+    }
+    
+    return hintBoard;
+  };
+  
+  // 验证解决方案是否正确
+  const validateSolution = (initialState: boolean[][], solution: boolean[][]) => {
+    const n = initialState.length;
+    // 复制初始状态
+    const board = initialState.map(row => [...row]);
+    
+    // 应用解决方案
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        if (solution[i][j]) {
+          // 模拟点击
+          toggleSimulatedStars(board, i, j, n);
+        }
+      }
+    }
+    
+    // 检查所有星星是否都亮起
+    return board.every(row => row.every(star => star === true));
+  };
+  
+  // 模拟点击操作，用于验证解决方案
+  const toggleSimulatedStars = (board: boolean[][], row: number, col: number, size: number) => {
+    // 翻转点击的格子
+    board[row][col] = !board[row][col];
+    
+    // 翻转上方格子（如果存在）
+    if (row > 0) board[row-1][col] = !board[row-1][col];
+    
+    // 翻转下方格子（如果存在）
+    if (row < size - 1) board[row+1][col] = !board[row+1][col];
+    
+    // 翻转左侧格子（如果存在）
+    if (col > 0) board[row][col-1] = !board[row][col-1];
+    
+    // 翻转右侧格子（如果存在）
+    if (col < size - 1) board[row][col+1] = !board[row][col+1];
+  };
+  
+  // 贪心算法找到一个可能的解决方案
+  const findGreedySolution = (currentStars: boolean[][]) => {
+    const n = currentStars.length;
+    const hintBoard = Array(n).fill(0).map(() => Array(n).fill(false));
+    const boardCopy = currentStars.map(row => [...row]);
+    
+    // 从上到下，从左到右遍历
+    for (let i = 0; i < n - 1; i++) {
+      for (let j = 0; j < n; j++) {
+        // 如果当前格子是暗的，点击下方格子
+        if (!boardCopy[i][j]) {
+          const nextRow = i + 1;
+          hintBoard[nextRow][j] = true;
+          toggleSimulatedStars(boardCopy, nextRow, j, n);
+        }
+      }
+    }
+    
+    // 检查最后一行
+    const lastRow = boardCopy[n - 1];
+    const allLit = lastRow.every(cell => cell === true);
+    
+    if (allLit) {
+      return hintBoard;
+    }
+    
+    return null;
+  };
+  
+  // 获取当前星图状态的提示
+  const getHintForCurrentState = () => {
+    // 需要从LightsGame组件获取当前状态
+    // 这里我们通过发起事件获取
+    const event = new CustomEvent('requestCurrentStarState', {
+      detail: { callback: (currentState: boolean[][]) => {
+        const hints = solveLightsOutPuzzle(currentState);
+        setSolutionHints(hints);
+        
+        if (!hints) {
+          alert('当前星图状态无解！');
+        }
+      }}
+    });
+    window.dispatchEvent(event);
+  };
+  
+  // 清除提示
+  const clearHints = () => {
+    setSolutionHints(null);
   };
 
   // 检测设备是否为移动设备
@@ -127,6 +333,14 @@ export default function Home() {
 
   const toggleOptions = () => {
     setIsOptionsOpen(!isOptionsOpen);
+  };
+
+  // 关闭开发者模式
+  const closeDevMode = () => {
+    setIsDevMode(false);
+    // 同时清除自定义状态和提示，确保不再显示自定义模式浮窗
+    setCustomInitialState(null);
+    setSolutionHints(null);
   };
 
   return (
@@ -261,6 +475,31 @@ export default function Home() {
                       </div>
                     )}
                   </div>
+                  
+                  {/* 提示工具 */}
+                  <div className="mb-3 border-t border-indigo-700 pt-3">
+                    <p className="text-xs md:text-sm text-indigo-300 mb-2">求解提示工具:</p>
+                    <div className="flex space-x-2">
+                      {!solutionHints ? (
+                        <button 
+                          className="px-2 py-1 rounded-full text-xs bg-gradient-to-r from-yellow-500/80 to-amber-600/80 text-white border border-yellow-400/50 hover:brightness-105 transition-all shadow-sm"
+                          onClick={getHintForCurrentState}
+                        >
+                          显示解法提示
+                        </button>
+                      ) : (
+                        <button 
+                          className="px-2 py-1 rounded-full text-xs bg-gradient-to-r from-rose-500/80 to-rose-600/80 text-white border border-rose-400/50 hover:brightness-105 transition-all shadow-sm"
+                          onClick={clearHints}
+                        >
+                          清除提示
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-indigo-300 mt-2">
+                      提示将显示需点击的星星位置
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
@@ -277,6 +516,7 @@ export default function Home() {
         <LightsGame 
           boardSize={boardSize} 
           initialState={customInitialState}
+          solutionHints={solutionHints}
         />
         
         {/* 在移动设备上添加屏幕旋转提示 */}

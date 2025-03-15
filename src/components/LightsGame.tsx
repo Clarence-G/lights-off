@@ -6,9 +6,10 @@ import styles from './LightsGame.module.css';
 interface LightsGameProps {
   boardSize: number;
   initialState?: boolean[][] | null;
+  solutionHints?: boolean[][] | null; // 添加求解提示属性
 }
 
-const LightsGame = ({ boardSize = 3, initialState = null }: LightsGameProps) => {
+const LightsGame = ({ boardSize = 3, initialState = null, solutionHints = null }: LightsGameProps) => {
   // 游戏状态: true表示星星亮起，false表示星星暗淡
   const [stars, setStars] = useState<boolean[][]>([]);
   const [isWinner, setIsWinner] = useState(false);
@@ -19,6 +20,21 @@ const LightsGame = ({ boardSize = 3, initialState = null }: LightsGameProps) => 
     initializeGame();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardSize, initialState]); // 当boardSize或initialState改变时重新初始化游戏
+
+  // 监听获取当前状态的请求
+  useEffect(() => {
+    const handleRequestState = (event: CustomEvent) => {
+      if (event.detail && typeof event.detail.callback === 'function') {
+        event.detail.callback([...stars.map(row => [...row])]);
+      }
+    };
+
+    window.addEventListener('requestCurrentStarState', handleRequestState as EventListener);
+    
+    return () => {
+      window.removeEventListener('requestCurrentStarState', handleRequestState as EventListener);
+    };
+  }, [stars]);
 
   // 随机初始化游戏，确保有解
   const initializeGame = () => {
@@ -122,6 +138,22 @@ const LightsGame = ({ boardSize = 3, initialState = null }: LightsGameProps) => 
     } as React.CSSProperties;
   };
 
+  // 渲染星星，添加提示标记逻辑
+  const renderStar = (rowIndex: number, colIndex: number, isOn: boolean) => {
+    const isHinted = solutionHints && solutionHints[rowIndex][colIndex];
+    
+    return (
+      <div
+        key={`${rowIndex}-${colIndex}`}
+        className={`${styles.cell} ${isOn ? styles.on : styles.off} ${isHinted ? styles.hint : ''}`}
+        style={getStarSizeStyle()}
+        onClick={() => handleClick(rowIndex, colIndex)}
+      >
+        {isHinted && <div className={styles.hintMarker}>+</div>}
+      </div>
+    );
+  };
+
   return (
     <div className={styles.gameContainer}>
       <h1 className={styles.title}>
@@ -134,20 +166,16 @@ const LightsGame = ({ boardSize = 3, initialState = null }: LightsGameProps) => 
       <div className={styles.board}>
         {stars.map((row, rowIndex) => (
           <div key={rowIndex} className={styles.row}>
-            {row.map((star, colIndex) => (
-              <div
-                key={`${rowIndex}-${colIndex}`}
-                className={`${styles.cell} ${star ? styles.on : styles.off}`}
-                style={getStarSizeStyle()}
-                onClick={() => handleClick(rowIndex, colIndex)}
-              />
-            ))}
+            {row.map((star, colIndex) => renderStar(rowIndex, colIndex, star))}
           </div>
         ))}
       </div>
       
       <div className={styles.stats}>
         <p>移动次数: {moveCount}</p>
+        {solutionHints && (
+          <p className={styles.hintText}>提示模式已启用</p>
+        )}
       </div>
       
       {isWinner && (
