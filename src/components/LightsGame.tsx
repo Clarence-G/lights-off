@@ -154,14 +154,14 @@ const LightsGame = ({ boardSize = 3, initialState = null }: LightsGameProps) => 
           <h2>✨ 星光璀璨！✨</h2>
           <p>你成功点亮了所有星星，用了 {moveCount} 次移动！</p>
           <button className={styles.resetButton} onClick={initializeGame}>
-            再次挑战
+            <span>✨</span> 再次挑战 <span>✨</span>
           </button>
         </div>
       )}
       
       {!isWinner && (
         <button className={styles.resetButton} onClick={initializeGame}>
-          重置星图
+          <span>✨</span> 重置星图 <span>✨</span>
         </button>
       )}
     </div>

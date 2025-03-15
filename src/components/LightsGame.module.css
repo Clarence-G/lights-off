@@ -69,7 +69,6 @@
 .cell {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -78,65 +77,121 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
+  border-radius: 12px;
 }
 
 .cell::before {
   content: '';
   position: absolute;
-  width: 100%;
-  height: 100%;
-  clip-path: polygon(
-    50% 0%, 61% 35%, 98% 35%, 68% 57%,
-    79% 91%, 50% 70%, 21% 91%, 32% 57%,
-    2% 35%, 39% 35%
-  );
+  width: 90%;
+  height: 90%;
+  border-radius: 10px;
   background: inherit;
   z-index: 1;
+  transform: scale(1);
+  transition: transform 0.2s ease-out;
 }
 
 .cell::after {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  border-radius: 50%;
+  top: -15%; left: -15%; right: -15%; bottom: -15%;
   opacity: 0;
   z-index: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(255, 215, 0, 0.3) 50%, transparent 75%);
+  transform: scale(0);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  border-radius: 15px;
+}
+
+.cell:active::before {
+  transform: scale(0.85);
 }
 
 .cell:active::after {
+  opacity: 0.8;
+  transform: scale(1);
   animation: ripple 0.8s ease-out;
 }
 
 @keyframes ripple {
   0% { 
-    opacity: 1; 
-    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); 
+    opacity: 0.5; 
+    transform: scale(0.5);
+    box-shadow: 0 0 5px 2px rgba(255, 215, 0, 0.5); 
+    border-radius: 15px;
   }
   100% { 
     opacity: 0; 
-    box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); 
+    transform: scale(1.5);
+    box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0); 
+    border-radius: 15px;
   }
 }
 
 .off {
   background-color: #1a2442;
-  border: 2px solid #2d3a66;
-  opacity: 0.6;
+  border: none;
+  opacity: 0.3;
+  box-shadow: none;
+  transform: scale(0.92);
+  border-radius: 10px;
+}
+
+.off::before {
+  opacity: 0.4;
   box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1);
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.2));
 }
 
 .on {
   background-color: #ffd700;
-  border: 2px solid #ffec8b;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.7), inset 0 0 10px rgba(255, 255, 255, 0.8);
-  animation: twinkle 3s infinite ease-in-out;
+  border: none;
+  box-shadow: 0 0 15px 3px rgba(255, 215, 0, 0.5), 0 0 5px 1px rgba(255, 255, 255, 0.6);
+  animation: softTwinkle 4s infinite ease-in-out;
   animation-delay: calc(var(--delay, 0) * 0.5s);
+  position: relative;
+  z-index: 2;
+  transform: scale(1);
+  border-radius: 10px;
 }
 
-@keyframes twinkle {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
+.on::before {
+  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.7) inset;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.6));
+}
+
+.on::after {
+  content: '';
+  position: absolute;
+  width: 130%;
+  height: 130%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(255, 215, 0, 0.3) 30%, transparent 70%);
+  opacity: 0.5;
+  animation: softPulseGlow 4s infinite ease-in-out;
+  animation-delay: calc(var(--delay, 0) * 0.5s);
+  border-radius: 12px;
+}
+
+@keyframes softPulseGlow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.05); }
+}
+
+@keyframes softTwinkle {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1); 
+    box-shadow: 0 0 15px 3px rgba(255, 215, 0, 0.5), 0 0 5px 1px rgba(255, 255, 255, 0.6); 
+    border-radius: 10px;
+  }
+  50% { 
+    opacity: 0.95; 
+    transform: scale(1.03); 
+    box-shadow: 0 0 18px 5px rgba(255, 215, 0, 0.6), 0 0 8px 2px rgba(255, 255, 255, 0.7); 
+    border-radius: 10px;
+  }
 }
 
 @keyframes starAppear {
@@ -152,26 +207,64 @@
 
 .resetButton {
   padding: 0.8rem 1.5rem;
-  background: linear-gradient(135deg, #4338ca 0%, #1e40af 100%);
-  color: white;
+  background: linear-gradient(135deg, #cfab4c 0%, #b58e20 100%);
+  color: #0f1129;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   margin-top: 0.5rem;
-  min-width: 120px;
+  min-width: 140px;
   min-height: 44px;
   touch-action: manipulation;
-  border: 1px solid #6366f1;
-  box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+  border: 1px solid #d6bc67;
+  box-shadow: 0 0 5px rgba(207, 171, 76, 0.3);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.resetButton span {
+  display: inline-block;
+  animation: simpleTwinkle 4s infinite ease-in-out;
+  opacity: 0.85;
+}
+
+.resetButton span:first-child {
+  animation-delay: 0s;
+}
+
+.resetButton span:last-child {
+  animation-delay: 1.5s;
+}
+
+@keyframes simpleTwinkle {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 0.85;
+  }
+  50% { 
+    transform: scale(1.05); 
+    opacity: 0.95;
+  }
 }
 
 .resetButton:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
+  background: linear-gradient(135deg, #d4b459 0%, #c39a2a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 8px rgba(207, 171, 76, 0.4);
+}
+
+.resetButton:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 3px rgba(207, 171, 76, 0.2);
 }
 
 .winnerMessage {
@@ -185,6 +278,9 @@
   width: 100%;
   backdrop-filter: blur(8px);
   border: 1px solid #475569;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .winnerMessage h2 {

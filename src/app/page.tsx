@@ -162,9 +162,11 @@ export default function Home() {
         <div className="w-full max-w-md mb-4 md:mb-6 px-2">
           <button 
             onClick={toggleOptions}
-            className="flex items-center justify-between w-full px-3 py-2 md:px-4 md:py-2 bg-indigo-900/70 hover:bg-indigo-800/70 transition-colors rounded-lg border border-indigo-700 backdrop-blur-sm"
+            className="flex items-center justify-between w-full px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 transition-colors rounded-full border border-indigo-400 text-white shadow-md shadow-indigo-500/20"
           >
-            <span className="font-medium text-sm md:text-base">星图选项</span>
+            <span className="font-medium text-sm md:text-base flex items-center">
+              <span className="mr-1 opacity-80">✨</span> 星图选项
+            </span>
             <svg 
               className={`w-4 h-4 transition-transform duration-300 ${isOptionsOpen ? 'rotate-180' : ''}`} 
               fill="none" 
@@ -178,8 +180,8 @@ export default function Home() {
           
           {/* 选项面板 */}
           <div 
-            className={`mt-2 bg-indigo-900/70 backdrop-blur-md rounded-lg transition-all duration-300 overflow-hidden ${
-              isOptionsOpen ? 'max-h-[1000px] opacity-100 border border-indigo-700' : 'max-h-0 opacity-0'
+            className={`mt-2 bg-indigo-900/80 backdrop-blur-md rounded-lg transition-all duration-300 overflow-hidden border border-indigo-700 shadow-md shadow-indigo-500/10 ${
+              isOptionsOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
             }`}
           >
             <div className="p-3 md:p-4">
@@ -187,19 +189,19 @@ export default function Home() {
                 <p className="text-xs md:text-sm text-indigo-300 mb-2">星图大小:</p>
                 <div className="flex space-x-2">
                   <button 
-                    className={`px-3 py-2 rounded text-xs md:text-sm ${boardSize === 3 ? 'bg-blue-600' : 'bg-indigo-800'} hover:bg-blue-500 transition-colors`}
+                    className={`px-3 py-2 rounded-full text-xs md:text-sm flex items-center justify-center ${boardSize === 3 ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white border border-blue-400' : 'bg-indigo-800/70 text-white border border-indigo-600'} hover:bg-indigo-700 transition-all shadow-sm`}
                     onClick={() => setBoardSize(3)}
                   >
                     3x3
                   </button>
                   <button 
-                    className={`px-3 py-2 rounded text-xs md:text-sm ${boardSize === 4 ? 'bg-blue-600' : 'bg-indigo-800'} hover:bg-blue-500 transition-colors`}
+                    className={`px-3 py-2 rounded-full text-xs md:text-sm flex items-center justify-center ${boardSize === 4 ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white border border-blue-400' : 'bg-indigo-800/70 text-white border border-indigo-600'} hover:bg-indigo-700 transition-all shadow-sm`}
                     onClick={() => setBoardSize(4)}
                   >
                     4x4
                   </button>
                   <button 
-                    className={`px-3 py-2 rounded text-xs md:text-sm ${boardSize === 5 ? 'bg-blue-600' : 'bg-indigo-800'} hover:bg-blue-500 transition-colors`}
+                    className={`px-3 py-2 rounded-full text-xs md:text-sm flex items-center justify-center ${boardSize === 5 ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white border border-blue-400' : 'bg-indigo-800/70 text-white border border-indigo-600'} hover:bg-indigo-700 transition-all shadow-sm`}
                     onClick={() => setBoardSize(5)}
                   >
                     5x5
@@ -215,9 +217,11 @@ export default function Home() {
               {isDevMode && (
                 <div className="mt-4 pt-4 border-t border-indigo-700">
                   <div className="flex justify-between items-center mb-3">
-                    <p className="text-xs md:text-sm text-blue-400">星图设计师工具</p>
+                    <p className="text-xs md:text-sm text-indigo-300 flex items-center">
+                      <span className="mr-1 opacity-80">✨</span> 星图设计师工具
+                    </p>
                     <button 
-                      className="text-xs text-indigo-400 hover:text-white"
+                      className="text-xs bg-gradient-to-r from-rose-400/80 to-rose-500/80 px-2 py-1 rounded-full border border-rose-400/50 text-white hover:from-rose-500/80 hover:to-rose-600/80 transition-all shadow-sm"
                       onClick={closeDevMode}
                     >
                       关闭设计师模式
@@ -228,20 +232,20 @@ export default function Home() {
                     <p className="text-xs md:text-sm text-indigo-300 mb-2">自定义星图初始状态:</p>
                     <div className="flex space-x-2 mb-2">
                       <button 
-                        className={`px-2 py-1 rounded text-xs ${customInitialState ? 'bg-green-600' : 'bg-indigo-800'} hover:bg-green-500 transition-colors`}
+                        className={`px-2 py-1 rounded-full text-xs ${customInitialState ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white border border-teal-400/50' : 'bg-gradient-to-r from-indigo-500 to-indigo-600 text-white border border-indigo-400/50'} hover:brightness-105 transition-all shadow-sm`}
                         onClick={initializeCustomState}
                       >
                         {customInitialState ? '编辑星图状态' : '创建星图'}
                       </button>
                       <button 
-                        className="px-2 py-1 rounded text-xs bg-indigo-800 hover:bg-blue-500 transition-colors"
+                        className="px-2 py-1 rounded-full text-xs bg-gradient-to-r from-blue-500/80 to-indigo-600/80 text-white border border-blue-400/50 hover:brightness-105 transition-all shadow-sm"
                         onClick={randomizeCustomState}
                       >
                         随机星图
                       </button>
                       {customInitialState && (
                         <button 
-                          className="px-2 py-1 rounded text-xs bg-red-700 hover:bg-red-600 transition-colors"
+                          className="px-2 py-1 rounded-full text-xs bg-gradient-to-r from-rose-500/80 to-rose-600/80 text-white border border-rose-400/50 hover:brightness-105 transition-all shadow-sm"
                           onClick={clearCustomState}
                         >
                           清除自定义
