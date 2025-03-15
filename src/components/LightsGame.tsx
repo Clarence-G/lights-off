@@ -5,9 +5,10 @@ import styles from './LightsGame.module.css';
 
 interface LightsGameProps {
   boardSize: number;
+  initialState?: boolean[][] | null;
 }
 
-const LightsGame = ({ boardSize = 3 }: LightsGameProps) => {
+const LightsGame = ({ boardSize = 3, initialState = null }: LightsGameProps) => {
   // 游戏状态: true表示灯亮，false表示灯灭
   const [lights, setLights] = useState<boolean[][]>([]);
   const [isWinner, setIsWinner] = useState(false);
@@ -16,11 +17,19 @@ const LightsGame = ({ boardSize = 3 }: LightsGameProps) => {
   // 初始化游戏
   useEffect(() => {
     initializeGame();
-  }, [boardSize]); // 当boardSize改变时重新初始化游戏
+  }, [boardSize, initialState]); // 当boardSize或initialState改变时重新初始化游戏
 
   // 随机初始化游戏，确保有解
   const initializeGame = () => {
-    // 创建一个全部为false（灯灭）的大小为boardSize的矩阵
+    // 如果提供了自定义初始状态，直接使用
+    if (initialState) {
+      setLights([...initialState.map(row => [...row])]);
+      setIsWinner(false);
+      setMoveCount(0);
+      return;
+    }
+    
+    // 否则创建一个全部为false（灯灭）的大小为boardSize的矩阵
     const newBoard = Array(boardSize).fill(false).map(() => Array(boardSize).fill(false));
     
     // 随机翻转一些格子来生成初始状态
@@ -113,7 +122,12 @@ const LightsGame = ({ boardSize = 3 }: LightsGameProps) => {
 
   return (
     <div className={styles.gameContainer}>
-      <h1 className={styles.title}>Lights-On Game</h1>
+      <h1 className={styles.title}>
+        Lights-On Game
+        {initialState && (
+          <span className={styles.customBadge}>自定义模式</span>
+        )}
+      </h1>
       
       <div className={styles.board}>
         {lights.map((row, rowIndex) => (
