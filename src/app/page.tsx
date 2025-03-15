@@ -436,10 +436,7 @@ export default function Home() {
                   降低星光亮度和闪烁效果，减轻眼睛疲劳
                 </p>
               </div>
-              
-              <div className="text-xs md:text-sm text-indigo-300 mb-4">
-                当前星图大小: <span className="text-white font-medium">{boardSize}x{boardSize}</span>
-              </div>
+            
               
               {/* 开发者模式选项 */}
               {isDevMode && (
